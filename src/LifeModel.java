@@ -1,4 +1,4 @@
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          
 import java.awt.event.*;
 import java.io.File;
 import java.io.IOException;
@@ -43,7 +43,7 @@ public class LifeModel implements ActionListener
       
         try
         {
-        	File reader = new File("life100.txt");
+        	File reader = new File("glgun13_lif.dat");
         	Scanner infile = new Scanner(reader);
         	int numInitialCells = infile.nextInt();
             for (int count=0; count<numInitialCells; count++)
@@ -129,7 +129,26 @@ public class LifeModel implements ActionListener
      */
     public void oneGeneration()
     {
+    	for(int i = 0; i < myGrid.length; i ++) {
+    		for(int o = 0; o < myGrid[i].length; o ++) {
+    			if (myGrid[i][o].alive_now) {
+    				if( numLiveNeighbors(i,o) == 3 || numLiveNeighbors(i,o) == 2 ) {
+            			myGrid[i][o].setAliveNext(true);
+            		} else {
+            			myGrid[i][o].setAliveNext(false);
+            		}
+    			} else {
+    				if( numLiveNeighbors(i,o) == 3) {
+            			myGrid[i][o].setAliveNext(true);
+            		} else {
+            			myGrid[i][o].setAliveNext(false);
+            		}
+    			}
+        	}
+    		
+    	}
     	
+    	updateNextGen();
     } 
     
     /**
@@ -139,7 +158,16 @@ public class LifeModel implements ActionListener
      * use for each loops
      */
     private void updateNextGen() {
-
+    	int p = 0;
+    	int m = 0;
+    	for(LifeCell[] i: myGrid) {
+    		m = 0;
+    		for(LifeCell o: myGrid[p]) {
+        		myGrid[p][m].setAliveNow(myGrid[p][m].alive_next);
+        		m++;
+        	}
+    		p++;
+    	}
     }
      
     /**
@@ -154,7 +182,19 @@ public class LifeModel implements ActionListener
      */
     private int numLiveNeighbors (int row, int col)
     {
-       return 0;
+    	int num = 0;
+    	
+    	int[] cols = {-1,0,1,-1,1,-1,0,1};
+    	int[] rows = {1,1,1,0,0,-1,-1,-1};
+    	
+    	for(int i = 0; i < 8; i++) {
+	    	if((row+rows[i] < myGrid.length && row+rows[i] >= 0) && (col+cols[i] < myGrid[i].length && col+cols[i] >= 0)) {
+	    		if(myGrid[row+rows[i]][col+cols[i]].isAliveNow()) {
+	    			num++;
+	    		}
+	    	}
+    	}
+       return num;
     }
     
     /**
